@@ -13,10 +13,11 @@ img_list = []
 def feed_function():
     img_list = [f for f in listdir(temppath) if isfile(join(temppath, f))]
 
-    for x in img_list:
-        print(x)
-        #add the file name to temppath
-        #feed that new string into load_image()
+    for file_name in img_list:
+        path = str(temppath + str(file_name))
+        print(path)
+
+        #load_image(path) # set this equal to an array or something
 
 #function that processes each image based on the pixels - three dimensional array.
 def load_image(path):
@@ -29,7 +30,7 @@ def load_image(path):
 
     return im_arr
 
-images = load_image(path)
+#images = load_image(path)
 
 #print(images)
 
