@@ -1,4 +1,6 @@
 import os
+import tarfile
+
 import requests
 
 urls = [
@@ -34,9 +36,13 @@ def download_data():
     for i, url in enumerate(urls, 1):
         partition = 'images_{:02d}'.format(i)
         filename = 'images/{}.tar.gz'.format(partition)
-        if not os.path.exists(filename):
-            print('Downloading {}'.format(filename))
+        if not (os.path.exists(filename) or os.path.exists('images/{}'.format(partition))):
+            print('Downloading {}'.format(partition))
             download_file(url, filename)
+
+        print('Extracting {}'.format(partition))
+        with tarfile.open(filename, 'r:gz') as f:
+            f.extractall()
 
 if __name__ == '__main__':
     download_data()
