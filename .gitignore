@@ -1,0 +1,8 @@
+.venv/
+.vs/
+.vscode/
+data/testing/
+data/training/
+.DS_Store
+*.pyc
+*.tar.gz

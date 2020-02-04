@@ -1,4 +1,5 @@
 import os
+import shutil
 import tarfile
 
 import requests
@@ -18,6 +19,15 @@ urls = [
     'https://nihcc.box.com/shared/static/ioqwiy20ihqwyr8pf4c24eazhh281pbu.gz'
 ]
 
+class UnclassifiedError(Exception):
+    pass
+
+def mkdir(directory):
+    try:
+        os.makedirs(directory)
+    except OSError as e:
+        pass
+
 def download_file(url, filename):
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
@@ -28,21 +38,40 @@ def download_file(url, filename):
     return filename
 
 def download_data():
-    try:
-        os.makedirs('images')
-    except OSError as e:
-        pass
+    mkdir('data')
+    mkdir('data/training')
+    mkdir('data/testing')
+
+    with open('data/training.txt', 'r') as f:
+        training = [line.rstrip() for line in f]
+
+    with open('data/testing.txt', 'r') as f:
+        testing = [line.rstrip() for line in f]
 
     for i, url in enumerate(urls, 1):
-        partition = 'images_{:02d}'.format(i)
-        filename = 'images/{}.tar.gz'.format(partition)
-        if not (os.path.exists(filename) or os.path.exists('images/{}'.format(partition))):
-            print('Downloading {}'.format(partition))
+        filename = 'data/images_{:02d}.tar.gz'.format(i)
+        if not os.path.exists(filename):
+            print('Downloading {}'.format(filename))
             download_file(url, filename)
 
-        print('Extracting {}'.format(partition))
-        with tarfile.open(filename, 'r:gz') as f:
-            f.extractall()
+    tarballs = [f for f in os.listdir('data') if f.endswith('tar.gz')]
+    for tarball in tarballs:
+        print('Extracting {}'.format(tarball))
+        with tarfile.open('data/{}'.format(tarball), 'r:gz') as f:
+            f.extractall('data')
+
+    print('Splitting data')
+    images = [f for f in os.listdir('data/images') if f.endswith('png')]
+    for image in images:
+        if image in training:
+            shutil.move('data/images/{}'.format(image), 'data/training/{}'.format(image))
+        elif image in testing:
+            shutil.move('data/images/{}'.format(image), 'data/testing/{}'.format(image))
+        else:
+            raise UnclassifiedError('{} does not belong to a dataset'.format(image))
+
+    os.remove('data/images')
+
 
 if __name__ == '__main__':
     download_data()
