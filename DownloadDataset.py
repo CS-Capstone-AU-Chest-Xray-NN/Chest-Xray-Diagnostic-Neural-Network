@@ -26,15 +26,17 @@ def download_file(url, filename):
     return filename
 
 def download_data():
-    if os.path.exists('images'):
-        return
-
-    os.makedirs('images')
+    try:
+        os.makedirs('images')
+    except OSError as e:
+        pass
 
     for i, url in enumerate(urls, 1):
-        filename = f'images/images_{i:02}.tar.gz'
-        print(f'Downloading {filename}')
-        download_file(url, filename)
+        partition = 'images_{:02d}'.format(i)
+        filename = 'images/{}.tar.gz'.format(partition)
+        if not os.path.exists(filename):
+            print('Downloading {}'.format(filename))
+            download_file(url, filename)
 
 if __name__ == '__main__':
     download_data()
