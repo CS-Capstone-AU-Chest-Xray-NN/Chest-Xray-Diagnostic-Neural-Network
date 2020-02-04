@@ -21,7 +21,7 @@ def feed_function():
         print(path)
         check_format(path)
         image = Image.open(path)
-        print(image.size)
+        #print(image.size)
 
         #load_image(path) # set this equal to an array or something
 
@@ -41,8 +41,8 @@ def load_image(path):
 def check_format(path):
     image = Image.open(path)
     if(image.size != (1024, 1024)):
-        image.resize((1024, 1024))
-    image.save(path)
+        new_image = image.resize((1024, 1024))
+        print(new_image.size)
 
 
 
