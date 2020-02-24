@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow import keras
 
 def load_dataset(name):
     filenames, labels = load_data(name)
@@ -23,8 +24,10 @@ def load_data(name):
     labels = []
     for filename, label in mapping.items():
         filenames.append('data/{}/{}'.format(name, filename))
-        labels.append(label)
-    
+        # dumb hack to make sure shape matches
+        # there is 100% a better way to do this
+        labels.append([label] * 1024)
+
     return filenames, labels
 
 def parse_image(filename, label):
@@ -35,3 +38,25 @@ def parse_image(filename, label):
 
 if __name__ == '__main__':
     train_dataset = load_dataset('training')
+    test_dataset = load_dataset('testing')
+
+    model = keras.Sequential([
+        keras.layers.Flatten(),
+        keras.layers.Dropout(0.2),
+        keras.layers.Dense(64),
+        keras.layers.BatchNormalization(),
+        keras.layers.Activation('relu'),
+        keras.layers.Dense(1),
+        keras.layers.BatchNormalization(),
+        keras.layers.Activation('sigmoid')
+    ])
+
+    model.compile(
+        loss='binary_crossentropy',
+        optimizer=tf.keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0),
+        metrics=['accuracy']
+    )
+
+    model.fit(train_dataset)
+    # _, accuracy = model.evaluate(test_dataset, verbose=0)
+    # print(accuracy)
