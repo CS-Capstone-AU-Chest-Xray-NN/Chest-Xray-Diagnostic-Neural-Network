@@ -1,6 +1,20 @@
 import tensorflow as tf
 from tensorflow import keras
 
+LABELS = {}
+
+def get_labels():
+    labels = []
+    with open('data/data.csv', 'r') as f:
+        for line in f.readlines():
+            label = line.strip().split(',')[1]
+            if label not in labels:
+                labels.append(label)
+    label_map = {}
+    for i, label in enumerate(labels):
+        label_map[label] = i
+    return label_map
+
 def load_dataset(name):
     filenames, labels = load_data(name)
     dataset = tf.data.Dataset.from_tensor_slices((tf.constant(filenames), tf.constant(labels)))
@@ -26,7 +40,7 @@ def load_data(name):
         filenames.append('data/{}/{}'.format(name, filename))
         # dumb hack to make sure shape matches
         # there is 100% a better way to do this
-        labels.append([label] * 1024)
+        labels.append([LABELS[label]] * 1024)
 
     return filenames, labels
 
@@ -37,6 +51,8 @@ def parse_image(filename, label):
     return image, label
 
 if __name__ == '__main__':
+    LABELS = get_labels()
+
     train_dataset = load_dataset('training')
     test_dataset = load_dataset('testing')
 
@@ -58,5 +74,5 @@ if __name__ == '__main__':
     )
 
     model.fit(train_dataset)
-    # _, accuracy = model.evaluate(test_dataset, verbose=0)
-    # print(accuracy)
+    _, accuracy = model.evaluate(test_dataset, verbose=0)
+    print(accuracy)
