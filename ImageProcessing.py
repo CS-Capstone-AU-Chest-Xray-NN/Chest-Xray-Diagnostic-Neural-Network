@@ -43,6 +43,13 @@ def feed_function(temppath):
 
         #load_image(path) # set this equal to an array or something 
 
+#Used to resize a copy of an image to be displayed as a 512x512 preview on the user interface
+def generate_preview_image(image):
+    if(image.size != (512, 512)):
+        image = image.resize((512, 512))
+    
+    return image
+
 
 if __name__ == '__main__':
     feed_function(temppath)
