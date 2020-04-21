@@ -2,6 +2,7 @@
 .vs/
 .vscode/
 data/images
+data/images.npy
 .DS_Store
 *.pyc
 *.tar.gz
