@@ -1,11 +1,9 @@
-import numpy as np
 from keras.callbacks import EarlyStopping
 from keras.layers import Activation, Dense, Dropout, Flatten, MaxPooling2D
 from keras.layers.convolutional import Conv2D
 from keras.models import Sequential
 from sklearn.metrics import precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 
 from generator import ImageGenerator
 
@@ -57,9 +55,6 @@ class Model():
     def predict(self, X_test):
         return self.model.predict(X_test)
 
-    def argmax(self, array):
-        return np.argmax(array, axis=1)
-
     def precision_score(self, y_test, y_pred):
         return precision_score(y_test, y_pred, average='weighted')
 
@@ -68,3 +63,8 @@ class Model():
 
     def f1_score(self, y_test, y_pred):
         return f1_score(y_test, y_pred, average='weighted')
+
+    def save(self, path):
+        with open(path, 'w') as f:
+            f.write(self.model.to_json())
+        self.model.save_weights(path.replace('json', 'h5'))
