@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from keras.utils import np_utils
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
 from model import Model
@@ -10,10 +12,6 @@ if __name__ == '__main__':
     y = LabelEncoder().fit_transform(labels.Finding_Labels).reshape(-1, 1)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    X_train = X_train.reshape(X_train.shape[0], 1024, 1024, 1)
-    X_test = X_test.reshape(X_test.shape[0], 1024, 1024, 1)
-    X_train = X_train.astype('float32') /= 255
-    X_test = X_test.astype('float32') /= 255
     y_train = np_utils.to_categorical(y_train, 15)
     y_test = np_utils.to_categorical(y_test, 15)
 
