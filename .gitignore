@@ -3,6 +3,7 @@
 .vscode/
 data/images
 data/labels.csv
+data/model.*
 .DS_Store
 *.pyc
 *.tar.gz

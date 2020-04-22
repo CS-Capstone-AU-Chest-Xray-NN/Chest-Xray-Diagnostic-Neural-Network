@@ -10,9 +10,9 @@ class ImageGenerator(Sequence):
         self.batch_size = batch_size
 
     def __len__(self):
-        return np.ceil(len(self.filenames) / float(self.batch_size))
+        return int(np.ceil(len(self.filenames) / float(self.batch_size)))
 
     def __getitem__(self, idx):
         x = self.filenames[idx * self.batch_size:(idx + 1) * self.batch_size]
         y = self.labels[idx * self.batch_size:(idx + 1) * self.batch_size]
-        return np.array([cv2.resize(cv2.imread(name), (1024, 1024)) for name in x]), np.array(y)
+        return np.array([cv2.resize(cv2.imread('data/images/{}'.format(name)), (1024, 1024)) for name in x]), np.array(y)
